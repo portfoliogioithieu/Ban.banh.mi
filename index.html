@@ -1,480 +1,96 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kế hoạch xe Bánh Mì Thổ Nhĩ Kỳ</title>
-<style>
-*{box-sizing:border-box}
-body{font-family:system-ui,Arial,sans-serif;margin:0;background:#f4f5f7;color:#20242c}
-header{background:#c8102e;color:#fff;padding:18px 16px;text-align:center}
-header h1{margin:0;font-size:22px}
-header p{margin:6px 0 0;font-size:13px;opacity:.9}
-main{max-width:1150px;margin:0 auto;padding:16px}
-.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-h2{font-size:17px;margin:0 0 12px;color:#c8102e}
-h3{font-size:15px;margin:14px 0 6px;color:#20242c}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-label{display:block;font-size:12px;font-weight:600;margin-bottom:4px}
-input,select{width:100%;padding:9px;border:1px solid #d6d9e0;border-radius:8px;font-size:15px;text-align:right}
-input.text{text-align:left}
-input:focus{outline:2px solid #c8102e22;border-color:#c8102e}
-button{background:#c8102e;color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}
-button.secondary{background:#5b6472}
-button.small{padding:7px 10px;font-size:13px}
-.totalBox{margin-top:12px;background:#eaf7ee;border:2px solid #22a04a;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.totalBox span{font-size:14px;font-weight:700;color:#146c2e}
-.totalBox b{font-size:26px;color:#0f8a3d;white-space:nowrap}
-.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.kpi div{background:#f8f9fb;border:1px solid #e4e7ec;border-radius:10px;padding:12px}
-.kpi b{display:block;font-size:20px;color:#c8102e}
-.kpi span{font-size:12px;color:#5b6472}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{padding:8px;border-bottom:1px solid #e4e7ec;text-align:left;vertical-align:middle}
-th{background:#f1f2f5;font-size:12px}
-.right{text-align:right}
-.total{font-weight:800}
-.note{font-size:12px;color:#5b6472;margin-top:8px}
-.badge{display:inline-block;background:#eaf6ec;color:#1d7a36;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700}
-.badge.warn{background:#fff2d9;color:#8a5b00}
-.badge.bad{background:#fdeaea;color:#b42318}
-details{background:#f8f9fb;border:1px solid #e4e7ec;border-radius:10px;padding:10px 12px;margin-top:10px}
-summary{font-weight:700;cursor:pointer;color:#c8102e}
-ol,ul{padding-left:20px;margin:8px 0}
-li{margin:5px 0}
-.formula{background:#fff;border-left:4px solid #c8102e;padding:8px 10px;margin:8px 0;font-size:14px}
-.ingGrid{display:grid;grid-template-columns:2fr 1fr 1.2fr 1fr 1fr auto;gap:8px;align-items:end}
-.ingHead{font-weight:700;font-size:12px;color:#5b6472;padding-bottom:4px}
-@media(max-width:760px){.ingGrid{grid-template-columns:1fr 1fr}}
-.rowGrid{display:grid;grid-template-columns:2fr 1.2fr auto;gap:8px;align-items:end}
-@media(max-width:640px){.rowGrid{grid-template-columns:1fr}}
-@media print{header{background:#c8102e!important;-webkit-print-color-adjust:exact}button{display:none}}
-</style>
-</head>
-<body>
-<header>
-<h1>🥙 Kế hoạch & Quản lý Xe Bánh Mì Thổ Nhĩ Kỳ</h1>
-<p>Tính vốn, giá vốn chi tiết, điểm hòa vốn, lợi nhuận và theo dõi doanh số hằng ngày</p>
-</header>
-<main>
-
-<div class="card">
-<h2>1. Chi phí đầu tư ban đầu</h2>
-<p class="note">Dữ liệu mẫu đã nạp sẵn với mức chi phí sát thực tế cho xe bánh mì Thổ Nhĩ Kỳ tự vận hành. Bạn có thể sửa hoặc thêm khoản mới.</p>
-<div id="investmentRows"></div>
-<div style="margin-top:10px"><button onclick="addInvestment()">➕ Thêm chi phí đầu tư</button></div>
-<div class="totalBox"><span>TỔNG CHI PHÍ ĐẦU TƯ BAN ĐẦU</span><b id="totalSetup">0 đ</b></div>
-</div>
-
-<div class="card">
-<h2>2A. Tính giá vốn chi tiết từ nguyên liệu gốc</h2>
-<p class="note">Mỗi nguyên liệu là một dòng riêng. Nhập <b>giá mua 1 đơn vị</b> và <b>lượng dùng cho 1 ổ</b>; app sẽ tự tính chi phí nguyên liệu đó cho một ổ bánh.</p>
-
-<div class="ingGrid ingHead">
-<div>Tên nguyên liệu</div>
-<div>Đơn vị</div>
-<div>Giá mua / đơn vị</div>
-<div>Lượng dùng / ổ</div>
-<div>Chi phí / ổ</div>
-<div></div>
-</div>
-
-<div id="ingredientRows"></div>
-
-<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-<button onclick="addIngredient()">➕ Thêm nguyên liệu</button>
-<button class="secondary" onclick="addSampleIngredients()">Nạp lại nguyên liệu mẫu</button>
-<button class="secondary" onclick="clearIngredients()">Xóa tất cả nguyên liệu</button>
-</div>
-
-<div class="grid" style="margin-top:14px">
-<div><label>Tỷ lệ hao hụt dự phòng (%)</label><input class="money decimal" id="wastePct" type="text" inputmode="decimal" value="7"></div>
-</div>
-
-<div class="totalBox"><span>TỔNG GIÁ VỐN CHI TIẾT / Ổ</span><b id="detailedFoodCost">0 đ</b></div>
-<table id="costBreakdown"></table>
-
-<details open>
-<summary>📖 Hướng dẫn chi tiết cách tính giá vốn</summary>
-<h3>1) Nguyên tắc tính</h3>
-<div class="formula"><b>Chi phí nguyên liệu / ổ</b> = Giá mua 1 đơn vị × Lượng dùng cho 1 ổ</div>
-<p>Ví dụ: thịt chín giá 171,43 đ/gram, dùng 60 gram/ổ:</p>
-<div class="formula">171,43 × 60 = 10.286 đ/ổ</div>
-<p>Ví dụ: vỏ bánh giá 10.000 đ/cây, mỗi cây cắt 4 ổ. Nhập đơn vị “cây”, giá 10.000 đ, lượng dùng 0,25 cây/ổ. Kết quả là 2.500 đ/ổ.</p>
-
-<h3>2) Tính giá thịt chín từ thịt tươi</h3>
-<p>Thịt tươi mất nước và mỡ khi nướng, nên không được dùng giá thịt tươi chia trực tiếp cho lượng thịt cho vào bánh.</p>
-<div class="formula"><b>Giá thịt chín / gram</b> = Tổng tiền mua thịt ÷ Gram thịt chín sau nướng</div>
-<p>Ví dụ: mua 1.000 g thịt heo ướp với 120.000 đ; sau nướng chỉ còn 700 g thịt chín:</p>
-<div class="formula">120.000 ÷ 700 = 171,43 đ/gram thịt chín</div>
-<p>Nếu mỗi ổ dùng 60 g thịt chín:</p>
-<div class="formula">171,43 × 60 = 10.286 đ/ổ</div>
-
-<h3>3) Tính rau, xốt, gia vị</h3>
-<div class="formula"><b>Chi phí / ổ</b> = (Giá mua / đơn vị) × (Lượng dùng / ổ)</div>
-<p>Ví dụ: rau tổng hợp 25.000 đ/kg, dùng 40 g/ổ:</p>
-<div class="formula">(25.000 × 40) ÷ 1.000 = 1.000 đ/ổ</div>
-<p>Ví dụ: xốt 80.000 đ/lít, dùng 20 ml/ổ:</p>
-<div class="formula">(80.000 × 20) ÷ 1.000 = 1.600 đ/ổ</div>
-
-<h3>4) Cộng bao bì và hao hụt</h3>
-<div class="formula"><b>Hao hụt</b> = Tổng chi phí nguyên liệu × Tỷ lệ hao hụt</div>
-<div class="formula"><b>Giá vốn / ổ</b> = Thịt + Vỏ bánh + Rau + Xốt + Bao bì + Hao hụt</div>
-<p>Hao hụt gồm thịt dính dao/khay, đầu và đuôi xiên, rau cắt thừa, sốt rơi, bánh lỗi, túi rách và nguyên liệu tồn cuối ngày. Mức 7% là điểm khởi đầu; hãy điều chỉnh theo số liệu thực tế.</p>
-
-<h3>5) Lỗi thường gặp</h3>
-<ul>
-<li><b>Dùng giá thịt tươi thay giá thịt chín:</b> làm giá vốn thấp hơn thực tế.</li>
-<li><b>Không cân định lượng:</b> cho thêm 10 g thịt mỗi ổ có thể làm tăng chi phí đáng kể trong tháng.</li>
-<li><b>Quên bao bì:</b> túi giấy, giấy lau, tăm, hũ sốt đều là chi phí thật.</li>
-<li><b>Không ghi tồn cuối ngày:</b> cần ghi lại số xiên chưa bán và nguyên liệu bỏ để hiệu chỉnh.</li>
-<li><b>Chỉ tính một loại bánh:</b> nếu có extra thịt, phô mai hoặc combo, cần tạo giá vốn riêng cho từng SKU.</li>
-</ul>
-</details>
-
-<details open>
-<summary>🍖 Công cụ: Tính thịt tươi thành thịt chín</summary>
-<div class="grid">
-<div><label>Tổng tiền mua thịt tươi (đ)</label><input class="money" id="meatBuyTotal" type="text" inputmode="numeric" value="120000"></div>
-<div><label>Thịt tươi mua (gram)</label><input class="money" id="meatBuyWeight" type="text" inputmode="numeric" value="1000"></div>
-<div><label>Thịt chín sau nướng (gram)</label><input class="money" id="meatCooked" type="text" inputmode="numeric" value="700"></div>
-<div><label>Thịt chín dùng / ổ (gram)</label><input class="money" id="meatPerBanh" type="text" inputmode="numeric" value="60"></div>
-</div>
-<div class="totalBox"><span>GIÁ THỊT CHÍN / GRAM</span><b id="meatCookedPrice">0 đ</b></div>
-<div class="totalBox"><span>TIỀN THỊT / Ổ</span><b id="meatCostPerBanh">0 đ</b></div>
-<div style="margin-top:10px"><button onclick="addCookedMeat()">Thêm “Thịt chín” vào danh sách nguyên liệu</button></div>
-<p class="note">Công thức: Giá thịt chín/gram = Tổng tiền mua thịt ÷ Gram thịt chín sau nướng. Tiền thịt/ổ = Giá thịt chín/gram × Gram thịt dùng cho 1 ổ.</p>
-</details>
-</div>
-
-<div class="card">
-<h2>2B. Giá bán & lợi nhuận gộp</h2>
-<div class="grid">
-<div><label>Giá bán / ổ (đ)</label><input class="money" id="gia" type="text" inputmode="numeric" value="30000"></div>
-<div><label>Giá vốn / ổ (tự động từ mục 2A)</label><input class="money" id="autoFoodCost" type="text" value="0" readonly></div>
-</div>
-<div class="totalBox"><span>GIÁ VỐN TỰ ĐỘNG TỪ MỤC 2A</span><b id="autoFoodCostBig">0 đ</b></div>
-<div class="totalBox" style="border-color:#0f8a3d"><span>LỢI NHUẬN GỘP MỘT Ổ</span><b id="totalGross">0 đ</b></div>
-<p class="note">Công thức: <b>Lợi nhuận gộp = Giá bán - Giá vốn từ mục 2A</b>. Ví dụ: 30.000 - 17.319 = 12.681 đ/ổ.</p>
-</div>
-
-<div class="card">
-<h2>3. Chi phí vận hành hằng tháng</h2>
-<p class="note">Dữ liệu mẫu đã nạp sẵn. Nếu tự bán, để lương nhân viên bằng 0. Bạn có thể thêm phí giữ xe, bao bì in logo, quảng cáo, phí vệ sinh…</p>
-<div id="operatingRows"></div>
-<div style="margin-top:10px"><button onclick="addOperating()">➕ Thêm chi phí vận hành</button></div>
-<div class="grid" style="margin-top:14px">
-<div><label>Số ngày bán / tháng</label><input class="money" id="ngay" type="text" inputmode="numeric" value="26"></div>
-</div>
-<div class="totalBox"><span>TỔNG CHI PHÍ VẬN HÀNH MỖI THÁNG</span><b id="totalFixed">0 đ</b></div>
-</div>
-
-<div class="card">
-<h2>4. Kết quả kinh doanh</h2>
-<div class="grid" style="margin-bottom:12px">
-<div><label>Số lượng ổ muốn bán trong ngày</label><input class="money" id="targetDaily" type="text" inputmode="numeric" value="50"></div>
-</div>
-<div class="totalBox" style="border-color:#0f8a3d"><span>LỢI NHUẬN / NGÀY THEO MỤC TIÊU</span><b id="dailyProfit">0 đ</b></div>
-<p class="note">Công thức: <b>Lợi nhuận / ngày = Số ổ muốn bán trong ngày × Lợi nhuận gộp mỗi ổ</b>. Ví dụ: 50 ổ × 12.681 đ = 634.060 đ/ngày.</p>
-<div class="kpi" id="kpis"></div>
-<table id="resultTable"></table>
-<p class="note" id="advice"></p>
-<details open>
-<summary>📖 Hướng dẫn hòa vốn và lợi nhuận</summary>
-<h3>1) Lợi nhuận gộp mỗi ổ</h3>
-<div class="formula"><b>Lợi nhuận gộp / ổ</b> = Giá bán - Giá vốn tự động từ mục 2A</div>
-<p>Ví dụ: 30.000 - 17.319 = <b>12.681 đ/ổ</b>.</p>
-
-<h3>2) Lợi nhuận / ngày</h3>
-<div class="formula"><b>Lợi nhuận / ngày</b> = Số ổ muốn bán trong ngày × Lợi nhuận gộp mỗi ổ</div>
-<p>Ví dụ: 50 ổ × 12.681 đ = <b>634.060 đ/ngày</b>.</p>
-
-<h3>3) Chi phí vận hành</h3>
-<div class="formula"><b>Chi phí vận hành / tháng</b> = Tổng các khoản chi phí vận hành bạn thêm</div>
-
-<h3>4) Điểm hòa vốn</h3>
-<div class="formula"><b>Số ổ hòa vốn / tháng</b> = Chi phí vận hành ÷ Lợi nhuận gộp mỗi ổ</div>
-<div class="formula"><b>Số ổ hòa vốn / ngày</b> = Số ổ hòa vốn / tháng ÷ Số ngày bán / tháng</div>
-
-<h3>5) Mục tiêu có lãi</h3>
-<div class="formula"><b>Số ổ cần bán</b> = (Chi phí vận hành + Lợi nhuận mong muốn) ÷ Lợi nhuận gộp mỗi ổ</div>
-<p>App đang mặc định mục tiêu lãi 5 triệu/tháng.</p>
-</details>
-</div>
-
-<div class="card">
-<h2>5. Theo dõi doanh số hằng ngày</h2>
-<div class="grid">
-<div><label>Ngày</label><input id="ngayBan" type="date"></div>
-<div><label>Số ổ bán được</label><input class="money" id="soO" type="text" inputmode="numeric" value="0"></div>
-<div><label>Giảm giá / khuyến mãi (đ)</label><input class="money" id="giamGia" type="text" inputmode="numeric" value="0"></div>
-<div><label>Ghi chú</label><input id="ghiChu" class="text" placeholder="Trời mưa, hết thịt, vị trí tốt..."></div>
-</div>
-<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-<button onclick="addDay()">Lưu ngày bán</button>
-<button class="secondary" onclick="clearDays()">Xóa toàn bộ dữ liệu</button>
-<button class="secondary" onclick="window.print()">Xuất / In báo cáo</button>
-</div>
-<table id="salesTable"></table>
-<p class="note">Dữ liệu được lưu ngay trên thiết bị của bạn. Không cần internet và không gửi dữ liệu đi đâu.</p>
-</div>
-
+<!doctype html><html lang="vi" class=""><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Kebab Plan"><meta name="theme-color" content="#0f766e"><link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230f766e'/%3E%3Ctext x='50' y='62' font-size='48' text-anchor='middle' fill='white'%3E%F0%9F%A5%99%3C/text%3E%3C/svg%3E"><link rel="manifest" href='data:application/manifest+json,{"name":"Kebab Plan","short_name":"Kebab","start_url":".","display":"standalone","background_color":"#F8F9FA","theme_color":"#0f766e"}'><title>Kebab Plan — Quản lý xe bánh mì Thổ Nhĩ Kỳ</title><script src="https://cdn.tailwindcss.com"></script><script>tailwind.config={darkMode:'class',theme:{extend:{colors:{brand:{50:'#eff6ff',100:'#dbeafe',500:'#2563eb',600:'#1d4ed8'},teal:{50:'#f0fdfa',100:'#ccfbf1',500:'#14b8a6',600:'#0d9488',700:'#0f766e'}},fontFamily:{sans:['Inter','system-ui','sans-serif']},borderRadius:{'2xl':'1rem','3xl':'1.5rem'}}}}</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><style>html{scroll-behavior:smooth}.card{transition:all .3s ease}.card:hover{transform:translateY(-2px);box-shadow:0 12px 28px -12px rgba(15,23,42,.18)}.sidebar{transition:transform .3s ease}@media(max-width:1023px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}}.page{display:none}.page.active{display:block}input:focus{outline:none;box-shadow:0 0 0 3px rgba(13,148,136,.15);border-color:#0d9488}.switch{width:44px;height:24px;border-radius:999px;background:#cbd5e1;position:relative;transition:all .3s}.switch.on{background:#22c55e}.switch span{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:999px;background:white;display:grid;place-items:center;font-size:10px;transition:all .3s}.switch.on span{left:22px}</style></head><body class="bg-[#F8F9FA] dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans"><div class="flex min-h-screen"><aside id="sidebar" class="sidebar fixed lg:sticky top-0 z-40 h-screen w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-5 flex flex-col"><div class="flex items-center gap-3 mb-8"><div class="w-11 h-11 rounded-2xl bg-teal-600 text-white grid place-items-center text-xl shadow-sm"><i class="fa-solid fa-burger"></i></div><div><div class="font-extrabold text-lg leading-tight">Kebab Plan</div><div class="text-xs text-slate-500 dark:text-slate-400">Xe bánh mì Thổ Nhĩ Kỳ</div></div></div><nav class="space-y-1 text-sm font-semibold" id="menu"></nav><div class="mt-auto p-4 rounded-2xl bg-teal-50 dark:bg-slate-800 text-sm"><div class="font-bold mb-1 text-teal-700 dark:text-teal-300">Mẹo vận hành</div><p class="text-slate-600 dark:text-slate-300">Cân định lượng thịt, rau, xốt mỗi ngày để kiểm soát giá vốn và giảm hao hụt.</p></div></aside><div id="overlay" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden" onclick="toggleSidebar()"></div><div class="flex-1 min-w-0"><header class="sticky top-0 z-20 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 py-3 flex items-center gap-3"><button class="lg:hidden w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button><div class="hidden md:flex items-center gap-2 flex-1 max-w-xl bg-slate-100 dark:bg-slate-800 rounded-2xl px-4 py-2"><i class="fa-solid fa-magnifying-glass text-slate-400"></i><input id="search" class="bg-transparent outline-none w-full text-sm" placeholder="Tìm chỉ tiêu, nguyên liệu, khoản chi..."></div><div class="ml-auto flex items-center gap-2"><button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-300"><i id="themeIcon" class="fa-solid fa-moon"></i></button><button class="relative w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800"><i class="fa-regular fa-bell"></i><span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-teal-600 text-white text-xs grid place-items-center">3</span></button><div class="w-10 h-10 rounded-full bg-teal-600 text-white grid place-items-center font-bold">K</div></div></header><main class="p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
+<section id="page-invest" class="page active"><div class="card bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6"><h2 class="text-xl font-bold mb-1">1. Chi phí đầu tư ban đầu</h2><p class="text-sm text-slate-500 dark:text-slate-400 mb-5">Các khoản chi một lần trước khi mở bán. Nhập tiền dạng 12,000,000.</p><div id="investmentRows" class="space-y-3"></div><button onclick="addItem('investments')" class="mt-4 text-sm"><i class="fa-solid fa-plus mr-1"></i> Thêm chi phí</button><div class="mt-5 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-700 flex justify-between items-center"><span class="font-bold text-emerald-700 dark:text-emerald-300">TỔNG CHI PHÍ ĐẦU TƯ</span><b id="totalSetup" class="text-2xl text-emerald-600 dark:text-emerald-400">0 đ</b></div></div></section>
+<section id="page-operating" class="page"><div class="card bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6"><h2 class="text-xl font-bold mb-1">2. Chi phí vận hành hằng tháng</h2><p class="text-sm text-slate-500 dark:text-slate-400 mb-5">Thêm từng khoản chi phí lặp lại hằng tháng. Nếu tự bán, để lương nhân viên bằng 0.</p><div id="operatingRows" class="space-y-3"></div><button onclick="addItem('operating')" class="mt-4 text-sm"><i class="fa-solid fa-plus mr-1"></i> Thêm chi phí vận hành</button><div class="mt-5 grid sm:grid-cols-2 gap-4"><div><label class="text-xs font-bold">Số ngày bán / tháng</label><input id="ngay" class="money mt-1 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3 text-right" inputmode="numeric" value="26"></div></div><div class="mt-5 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-700 flex justify-between items-center"><span class="font-bold text-emerald-700 dark:text-emerald-300">TỔNG CHI PHÍ VẬN HÀNH / THÁNG</span><b id="totalFixed" class="text-2xl text-emerald-600 dark:text-emerald-400">0 đ</b></div></div></section>
+<section id="page-foodcost" class="page"><div class="card bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6"><h2 class="text-xl font-bold mb-1">3. Tính giá vốn chi tiết</h2><p class="text-sm text-slate-500 dark:text-slate-400 mb-5">Mỗi nguyên liệu một dòng. Giá mua và lượng dùng phải cùng đơn vị. Ô thập phân: 0.035 hoặc 0,035.</p><div id="ingredientRows" class="space-y-3"></div><button onclick="addItem('ingredients')" class="mt-4 text-sm"><i class="fa-solid fa-plus mr-1"></i> Thêm nguyên liệu</button><div class="mt-5 grid sm:grid-cols-2 gap-4"><div><label class="text-xs font-bold">Hao hụt dự phòng (%)</label><input id="wastePct" class="money decimal mt-1 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3 text-right" inputmode="decimal" value="7"></div></div><div class="mt-5 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-700 flex justify-between items-center"><span class="font-bold text-emerald-700 dark:text-emerald-300">TỔNG GIÁ VỐN / Ổ</span><b id="detailedFoodCost" class="text-2xl text-emerald-600 dark:text-emerald-400">0 đ</b></div><table id="costBreakdown" class="w-full mt-4 text-sm"></table></div></section>
+<section id="page-price" class="page"><div class="card bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6"><h2 class="text-xl font-bold mb-1">4. Giá bán & lợi nhuận gộp</h2><p class="text-sm text-slate-500 dark:text-slate-400 mb-5">Giá vốn tự động lấy từ tab “Tính giá vốn chi tiết”.</p><div class="grid sm:grid-cols-2 gap-4"><div><label class="text-xs font-bold">Giá bán / ổ (đ)</label><input id="gia" class="money mt-1 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3 text-right" inputmode="numeric" value="30000"></div><div><label class="text-xs font-bold">Giá vốn / ổ (tự động)</label><input id="autoFoodCost" class="money mt-1 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3 text-right" readonly></div></div><div class="mt-5 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-700 flex justify-between items-center"><span class="font-bold text-emerald-700 dark:text-emerald-300">LỢI NHUẬN GỘP / Ổ</span><b id="totalGross" class="text-2xl text-emerald-600 dark:text-emerald-400">0 đ</b></div><p class="text-sm text-slate-500 dark:text-slate-400 mt-3">Lợi nhuận gộp = Giá bán - Giá vốn từ mục 3.</p></div></section>
+<section id="page-results" class="page"><div class="card bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6"><h2 class="text-xl font-bold mb-1">5. Mục tiêu / Kết quả kinh doanh</h2><p class="text-sm text-slate-500 dark:text-slate-400 mb-5">Nhập số ổ muốn bán trong ngày để xem lợi nhuận gộp/ngày và so với điểm hòa vốn.</p><div class="grid sm:grid-cols-2 gap-4"><div><label class="text-xs font-bold">Số ổ muốn bán trong ngày</label><input id="targetDaily" class="money mt-1 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3 text-right" inputmode="numeric" value="50"></div><div><label class="text-xs font-bold">Lợi nhuận mong muốn / tháng (đ)</label><input id="goal" class="money mt-1 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3 text-right" inputmode="numeric" value="5000000"></div></div><div class="mt-5 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-700"><div class="text-sm font-bold text-emerald-700 dark:text-emerald-300">LỢI NHUẬN GỘP / NGÀY THEO MỤC TIÊU</div><div id="dailyProfit" class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">0 đ</div><div class="text-xs text-slate-600 dark:text-slate-300 mt-1">Số ổ muốn bán × Lợi nhuận gộp mỗi ổ</div></div><div class="mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"><div class="text-sm font-bold text-slate-700 dark:text-slate-200">LỢI NHUẬN / NGÀY SAU CHI PHÍ VẬN HÀNH</div><div id="dailyNet" class="text-2xl font-extrabold text-teal-600 dark:text-teal-400 mt-1">0 đ</div><div class="text-xs text-slate-600 dark:text-slate-300 mt-1">Lợi nhuận gộp/ngày - Chi phí vận hành/tháng ÷ Số ngày bán</div></div><table id="resultTable" class="w-full mt-5 text-sm"></table><p id="advice" class="text-sm mt-3"></p></div></section>
+<section id="page-sales" class="page"><div class="card bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6"><h2 class="text-xl font-bold mb-1">6. Doanh số hằng ngày</h2><p class="text-sm text-slate-500 dark:text-slate-400 mb-5">Nhập số ổ bán thực tế để theo dõi doanh thu và lợi nhuận gộp.</p><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3"><div><label class="text-xs font-bold">Ngày</label><input id="ngayBan" type="date" class="mt-1 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3"></div><div><label class="text-xs font-bold">Số ổ bán được</label><input id="soO" class="money mt-1 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3 text-right" inputmode="numeric" value="0"></div><div><label class="text-xs font-bold">Giảm giá (đ)</label><input id="giamGia" class="money mt-1 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3 text-right" inputmode="numeric" value="0"></div><div><label class="text-xs font-bold">Ghi chú</label><input id="ghiChu" class="mt-1 w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3 text-left" placeholder="Trời mưa, hết thịt..."></div></div><div class="toolbar mt-4 flex gap-2 flex-wrap"><button onclick="addDay()"><i class="fa-solid fa-floppy-disk mr-1"></i> Lưu ngày bán</button><button onclick="clearDays()" class="secondary">Xóa dữ liệu</button><button onclick="exportPNG()" class="secondary"><i class="fa-solid fa-image mr-1"></i> Xuất PNG</button></div><div class="mt-5 overflow-x-auto"><table id="salesTable" class="w-full text-sm"></table></div></div></section>
+<section id="page-guide" class="page"><div class="card bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6"><h2 class="text-xl font-bold mb-1">7. Hướng dẫn</h2><div class="grid md:grid-cols-2 gap-4 text-sm"><div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800"><div class="font-bold mb-2">Giá vốn</div><ul class="list-disc pl-5 space-y-1"><li>Giá thịt chín/gram = Tổng tiền mua ÷ Gram thịt chín.</li><li>Chi phí nguyên liệu/ổ = Giá mua/đơn vị × Lượng dùng/ổ.</li><li>Giá vốn/ổ = Tổng nguyên liệu + hao hụt.</li></ul></div><div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800"><div class="font-bold mb-2">Hòa vốn</div><ul class="list-disc pl-5 space-y-1"><li>Lợi nhuận gộp/ổ = Giá bán - Giá vốn.</li><li>Hòa vốn/tháng = Chi phí vận hành ÷ Lợi nhuận gộp/ổ.</li><li>Hòa vốn/ngày = Hòa vốn/tháng ÷ Số ngày bán/tháng.</li></ul></div></div><div class="mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800"><div class="font-bold mb-2">Nhập số</div><ul class="list-disc pl-5 space-y-1"><li>Tiền: 12000000 hoặc 12,000,000.</li><li>Thập phân: 0.035 hoặc 0,035.</li><li>Ô thập phân hiển thị dấu chấm phần lẻ, không phân cách nghìn để tránh nhầm.</li></ul></div><div class="mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800"><div class="font-bold mb-2">iPhone</div><ul class="list-disc pl-5 space-y-1"><li>Đưa file lên website HTTPS.</li><li>Mở bằng Safari → Chia sẻ → Thêm vào Màn hình chính.</li><li>Mở từ icon để dùng chế độ standalone, ẩn thanh địa chỉ.</li></ul></div></div></section>
+<section id="page-backup" class="page"><div class="card bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6"><h2 class="text-xl font-bold mb-1">8. Sao lưu & khôi phục</h2><p class="text-sm text-slate-500 dark:text-slate-400 mb-5">Dữ liệu lưu cục bộ trên trình duyệt. Hãy tải bản sao định kỳ; xóa dữ liệu trình duyệt có thể làm mất dữ liệu.</p><div class="flex flex-wrap gap-3"><button onclick="backup()"><i class="fa-solid fa-download mr-1"></i> Tải bản sao JSON</button><button onclick="document.getElementById('import').click()" class="secondary"><i class="fa-solid fa-upload mr-1"></i> Khôi phục dữ liệu</button><button onclick="resetSample()" class="secondary"><i class="fa-solid fa-rotate-left mr-1"></i> Nạp lại mẫu</button><input id="import" type="file" accept="application/json" hidden></div><p id="storageNotice" class="text-sm text-slate-500 dark:text-slate-400 mt-4">Lưu cục bộ trên trình duyệt.</p></div></section>
+</main></div></div>
 <script>
+function toggleTheme(){document.documentElement.classList.toggle('dark');const dark=document.documentElement.classList.contains('dark');document.getElementById('themeIcon').className=dark?'fa-solid fa-sun':'fa-solid fa-moon';localStorage.setItem('kebabTheme',dark?'dark':'light')}
+if(localStorage.getItem('kebabTheme')==='dark'){document.documentElement.classList.add('dark');document.getElementById('themeIcon').className='fa-solid fa-sun'}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('hidden')}
 const money=n=>new Intl.NumberFormat('vi-VN',{maximumFractionDigits:2}).format(Number(n)||0)+' đ';
-
-function readMoney(value){
- let s=String(value||'').trim().replace(/\s/g,'');
- if(!s)return 0;
- s=s.replace(/[.,]/g,'');
- const n=parseInt(s||'0',10);
- return isNaN(n)?0:n;
-}
-function readDecimal(value){
- let s=String(value||'').trim().replace(/\s/g,'');
- if(!s)return 0;
- s=s.replace(/\./g,'.').replace(/,/g,'.');
- const n=parseFloat(s);
- return isNaN(n)?0:n;
-}
+function readMoney(v){let s=String(v||'').trim().replace(/\s/g,'');if(!s)return 0;s=s.replace(/[.,]/g,'');const n=parseInt(s||'0',10);return isNaN(n)?0:n}
+function readDecimal(v){let s=String(v||'').trim().replace(/\s/g,'');if(!s)return 0;s=s.replace(/,/g,'.');const n=parseFloat(s);return isNaN(n)?0:n}
 function formatMoney(n){return new Intl.NumberFormat('vi-VN').format(Number(n)||0)}
-function formatDecimal(n){return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:3}).format(Number(n)||0)}
-
-let investments=JSON.parse(localStorage.getItem('kebabInvestments')||'null');
-if(!investments){
- investments=[
-  {name:'Xe đẩy inox + lò nướng kebab',amount:12000000},
-  {name:'Máy ép bánh mì công suất lớn',amount:2500000},
-  {name:'Dao cắt thịt kebab điện',amount:1200000},
-  {name:'Bình gas, dây, đầu đốt & dụng cụ',amount:2000000},
-  {name:'Tủ lạnh mini bảo quản nguyên liệu',amount:3500000},
-  {name:'Decal, bảng hiệu, đèn LED',amount:2000000},
-  {name:'Khay inox, hộp đựng, tạp dề, dụng cụ',amount:1500000},
-  {name:'Chi phí khác / dự phòng',amount:3500000}
- ];
-}
-function saveInvestments(){localStorage.setItem('kebabInvestments',JSON.stringify(investments))}
-function renderInvestments(){
- document.getElementById('investmentRows').innerHTML=investments.map((x,i)=>`
- <div class="rowGrid" style="margin-bottom:8px">
-  <div><input class="text" value="${x.name}" oninput="updateInvestment(${i},'name',this.value)" placeholder="Tên khoản chi phí"></div>
-  <div><input class="money" data-index="${i}" value="${formatMoney(x.amount)}" placeholder="0"></div>
-  <div><button class="secondary small" onclick="removeInvestment(${i})">✕</button></div>
- </div>`).join('');
- attachMoneyEvents();
- calc();
-}
-function updateInvestmentFromInput(input){
- const i=Number(input.dataset.index);
- investments[i].amount=readMoney(input.value);
- saveInvestments();
- calc();
-}
-function removeInvestment(i){investments.splice(i,1);saveInvestments();renderInvestments()}
-function addInvestment(){investments.push({name:'',amount:0});saveInvestments();renderInvestments()}
-
-let operating=JSON.parse(localStorage.getItem('kebabOperating')||'null');
-if(!operating){
- operating=[
-  {name:'Thuê vị trí bán',amount:3000000},
-  {name:'Điện, nước, sạc thiết bị',amount:400000},
-  {name:'Gas nướng thịt',amount:700000},
-  {name:'Lương nhân viên',amount:3500000},
-  {name:'Marketing, app, quảng cáo',amount:300000}
- ];
-}
-function saveOperating(){localStorage.setItem('kebabOperating',JSON.stringify(operating))}
-function renderOperating(){
- document.getElementById('operatingRows').innerHTML=operating.map((x,i)=>`
- <div class="rowGrid" style="margin-bottom:8px">
-  <div><input class="text" value="${x.name}" oninput="updateOperating(${i},'name',this.value)" placeholder="Tên khoản chi phí"></div>
-  <div><input class="money" data-index="${i}" value="${formatMoney(x.amount)}" placeholder="0"></div>
-  <div><button class="secondary small" onclick="removeOperating(${i})">✕</button></div>
- </div>`).join('');
- attachMoneyEvents();
- calc();
-}
-function updateOperatingFromInput(input){
- const i=Number(input.dataset.index);
- operating[i].amount=readMoney(input.value);
- saveOperating();
- calc();
-}
-function removeOperating(i){operating.splice(i,1);saveOperating();renderOperating()}
-function addOperating(){operating.push({name:'',amount:0});saveOperating();renderOperating()}
-
-let ingredients=JSON.parse(localStorage.getItem('kebabIngredients')||'null');
-if(!ingredients){
- ingredients=[
-  {name:'Thịt heo (tính theo thịt chín)',unit:'gram',price:171.43,qty:60},
-  {name:'Vỏ bánh mì tam giác',unit:'cây',price:10000,qty:0.25},
-  {name:'Rau ăn kèm',unit:'kg',price:25000,qty:0.04},
-  {name:'Xốt & gia vị',unit:'lít',price:80000,qty:0.02},
-  {name:'Bao bì, giấy lau, tăm',unit:'bộ',price:800,qty:1}
- ];
-}
-function saveIngredients(){localStorage.setItem('kebabIngredients',JSON.stringify(ingredients))}
-function renderIngredients(){
- document.getElementById('ingredientRows').innerHTML=ingredients.map((x,i)=>`
- <div class="ingGrid" style="margin-bottom:8px">
-  <div><input class="text" value="${x.name}" oninput="updateIngredient(${i},'name',this.value)" placeholder="Tên nguyên liệu"></div>
-  <div><input class="text" value="${x.unit}" oninput="updateIngredient(${i},'unit',this.value)" placeholder="gram / kg / lít / cái"></div>
-  <div><input class="money decimal" data-index="${i}" data-key="price" value="${formatDecimal(x.price)}" placeholder="0"></div>
-  <div><input class="money decimal" data-index="${i}" data-key="qty" value="${formatDecimal(x.qty)}" placeholder="0"></div>
-  <div class="right total" id="ingCost${i}">${money(x.price*x.qty)}</div>
-  <div><button class="secondary small" onclick="removeIngredient(${i})">✕</button></div>
- </div>`).join('');
- attachMoneyEvents();
- calc();
-}
-function updateIngredientFromInput(input){
- const i=Number(input.dataset.index), key=input.dataset.key;
- ingredients[i][key]=readDecimal(input.value);
- saveIngredients();
- const cost=document.getElementById('ingCost'+i);
- if(cost)cost.textContent=money(ingredients[i].price*ingredients[i].qty);
- calc();
-}
-function removeIngredient(i){ingredients.splice(i,1);saveIngredients();renderIngredients()}
-function addIngredient(){ingredients.push({name:'',unit:'gram',price:0,qty:0});saveIngredients();renderIngredients()}
-function clearIngredients(){if(confirm('Xóa toàn bộ nguyên liệu?')){ingredients=[];saveIngredients();renderIngredients()}}
-function addSampleIngredients(){
- ingredients=[
-  {name:'Thịt heo (tính theo thịt chín)',unit:'gram',price:171.43,qty:60},
-  {name:'Vỏ bánh mì tam giác',unit:'cây',price:10000,qty:0.25},
-  {name:'Rau ăn kèm',unit:'kg',price:25000,qty:0.04},
-  {name:'Xốt & gia vị',unit:'lít',price:80000,qty:0.02},
-  {name:'Bao bì, giấy lau, tăm',unit:'bộ',price:800,qty:1}
- ];
- saveIngredients();renderIngredients();
-}
-function addCookedMeat(){
- const total=readMoney(document.getElementById('meatBuyTotal').value);
- const cooked=Math.max(readDecimal(document.getElementById('meatCooked').value),1);
- const per=readDecimal(document.getElementById('meatPerBanh').value);
- const price=total/cooked;
- ingredients.push({name:'Thịt chín',unit:'gram',price:price,qty:per});
- saveIngredients();renderIngredients();
-}
-function addDay(){
- const d=getDays();
- const date=document.getElementById('ngayBan').value||new Date().toISOString().slice(0,10);
- const units=readMoney(document.getElementById('soO').value);
- const discount=readMoney(document.getElementById('giamGia').value);
- const note=document.getElementById('ghiChu').value||'';
- const price=readMoney(document.getElementById('gia').value), food=currentFoodCost();
- const revenue=units*price-discount, cogs=units*food, profit=revenue-cogs;
- d.unshift({date,units,discount,note,revenue,cogs,profit});
- saveDays(d);renderSales();
- document.getElementById('soO').value='0';document.getElementById('giamGia').value='0';document.getElementById('ghiChu').value='';
-}
-function clearDays(){if(confirm('Xóa toàn bộ lịch sử bán hàng?')){saveDays([]);renderSales()}}
-function saveDays(d){localStorage.setItem('kebabDays',JSON.stringify(d))}
-function getDays(){return JSON.parse(localStorage.getItem('kebabDays')||'[]')}
-function currentFoodCost(){
- const subtotal=ingredients.reduce((s,x)=>s+(Number(x.price)||0)*(Number(x.qty)||0),0);
- return subtotal*(1+readDecimal(document.getElementById('wastePct').value)/100);
-}
-function renderSales(){
- const d=getDays(), t=document.getElementById('salesTable');
- if(!d.length){t.innerHTML='<tr><td>Chưa có dữ liệu. Hãy nhập số ổ bán mỗi ngày để theo dõi thực tế.</td></tr>';return}
- const totalUnits=d.reduce((s,x)=>s+x.units,0), totalRev=d.reduce((s,x)=>s+x.revenue,0), totalProfit=d.reduce((s,x)=>s+x.profit,0);
- t.innerHTML=`<tr><th>Ngày</th><th class="right">Ổ</th><th class="right">Doanh thu</th><th class="right">Lợi nhuận gộp</th><th>Ghi chú</th></tr>`
- +d.map(x=>`<tr><td>${x.date}</td><td class="right">${x.units}</td><td class="right">${money(x.revenue)}</td><td class="right">${money(x.profit)}</td><td>${x.note}</td></tr>`).join('')
- +`<tr><td class="total">Tổng cộng</td><td class="right total">${totalUnits}</td><td class="right total">${money(totalRev)}</td><td class="right total">${money(totalProfit)}</td><td></td></tr>`;
-}
-function calc(){
- const setup=investments.reduce((s,x)=>s+(Number(x.amount)||0),0);
- document.getElementById('totalSetup').textContent=money(setup);
-
- const total=readMoney(document.getElementById('meatBuyTotal').value);
- const cooked=Math.max(readDecimal(document.getElementById('meatCooked').value),1);
- const per=readDecimal(document.getElementById('meatPerBanh').value);
- const meatPrice=total/cooked, meatCost=meatPrice*per;
- document.getElementById('meatCookedPrice').textContent=money(meatPrice)+'/gram';
- document.getElementById('meatCostPerBanh').textContent=money(meatCost);
-
- const subtotal=ingredients.reduce((s,x)=>s+(Number(x.price)||0)*(Number(x.qty)||0),0);
- const waste=subtotal*readDecimal(document.getElementById('wastePct').value)/100;
- const foodCost=subtotal+waste;
- document.getElementById('detailedFoodCost').textContent=money(foodCost);
- document.getElementById('autoFoodCost').value=formatMoney(Math.round(foodCost));
- document.getElementById('autoFoodCostBig').textContent=money(foodCost);
-
- const price=readMoney(document.getElementById('gia').value);
- const gross=price-foodCost;
- const margin=price?gross/price*100:0;
- document.getElementById('totalGross').textContent=money(gross);
-
- const targetDaily=readMoney(document.getElementById('targetDaily').value);
- const dailyProfit=targetDaily*gross;
- document.getElementById('dailyProfit').textContent=money(dailyProfit);
-
- const fixed=operating.reduce((s,x)=>s+(Number(x.amount)||0),0);
- const days=Math.max(1,readMoney(document.getElementById('ngay').value));
- const beMonth=fixed/Math.max(gross,1), beDay=beMonth/days;
- const target=(fixed+5000000)/Math.max(gross,1), targetDay=target/days;
- document.getElementById('totalFixed').textContent=money(fixed);
- document.getElementById('kpis').innerHTML=[
-  ['Vốn đầu tư',money(setup)],['Giá vốn / ổ',money(foodCost)],['Lợi nhuận gộp / ổ',money(gross)],['Biên gộp',margin.toFixed(1)+'%'],
-  ['Hòa vốn / tháng',Math.ceil(beMonth)+' ổ'],['Hòa vốn / ngày',Math.ceil(beDay)+' ổ'],
-  ['Mục tiêu 5 triệu lợi nhuận',Math.ceil(targetDay)+' ổ/ngày'],['Lợi nhuận / ngày theo mục tiêu',money(dailyProfit)]
- ].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
- const rows=[
-  ['Chi phí đầu tư ban đầu',money(setup),'Tổng các khoản chi phí đầu tư một lần'],
-  ['Giá bán một ổ',money(price),'Giá bạn bán cho khách / ổ'],
-  ['Giá vốn một ổ',money(foodCost),'Tổng nguyên liệu + hao hụt từ mục 2A'],
-  ['Lợi nhuận gộp một ổ',money(gross),'Giá bán - Giá vốn một ổ'],
-  ['Tỷ lệ lợi nhuận gộp',margin.toFixed(1)+'%','(Lợi nhuận gộp ÷ Giá bán) × 100%'],
-  ['Số ổ muốn bán trong ngày',targetDaily+' ổ','Số ổ bạn đặt mục tiêu bán trong ngày'],
-  ['Lợi nhuận / ngày theo mục tiêu',money(dailyProfit),'Số ổ muốn bán × Lợi nhuận gộp mỗi ổ'],
-  ['Chi phí vận hành / tháng',money(fixed),'Tổng các khoản chi phí vận hành'],
-  ['Số ngày bán / tháng',days+' ngày','Số ngày bạn dự kiến mở bán'],
-  ['Điểm hòa vốn / tháng',Math.ceil(beMonth)+' ổ','Chi phí vận hành ÷ Lợi nhuận gộp mỗi ổ'],
-  ['Điểm hòa vốn / ngày',Math.ceil(beDay)+' ổ','Điểm hòa vốn / tháng ÷ Số ngày bán / tháng'],
-  ['Số ổ cần bán để lãi 5 triệu/tháng',Math.ceil(target)+' ổ','(Chi phí vận hành + 5.000.000) ÷ Lợi nhuận gộp mỗi ổ'],
-  ['Mục tiêu bán mỗi ngày',Math.ceil(targetDay)+' ổ','Số ổ cần bán để lãi 5 triệu ÷ Số ngày bán / tháng']
- ];
- document.getElementById('resultTable').innerHTML='<tr><th>Chỉ tiêu</th><th class="right">Kết quả</th><th>Cách tính</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td class="right total">${r[1]}</td><td>${r[2]}</td></tr>`).join('');
- let advice='';
- if(gross<=0) advice='<span class="badge bad">Giá bán chưa đủ bù giá vốn. Cần tăng giá hoặc giảm giá vốn.</span>';
- else if(beDay>30) advice='<span class="badge bad">Mục tiêu quá cao so với mô hình xe đẩy. Cần giảm chi phí, đổi vị trí hoặc tăng giá.</span>';
- else if(beDay>20) advice='<span class="badge warn">Khả thi nhưng cần vị trí tốt và phục vụ nhanh trong giờ cao điểm.</span>';
- else advice='<span class="badge">Mô hình có biên an toàn tốt nếu duy trì đều doanh số.</span>';
- document.getElementById('advice').innerHTML=advice;
- renderSales();
-}
+function formatDecimal(n){return String(Number(n)||0)}
+let investments=JSON.parse(localStorage.getItem('kebabInvestments')||'null')||[
+ {name:'Xe đẩy inox + lò nướng kebab',amount:12000000},
+ {name:'Máy ép bánh mì',amount:2500000},
+ {name:'Dao cắt thịt điện',amount:1200000},
+ {name:'Bình gas & dụng cụ',amount:2000000},
+ {name:'Tủ lạnh mini',amount:3500000},
+ {name:'Decal, bảng hiệu, LED',amount:2000000},
+ {name:'Dụng cụ & dự phòng',amount:5000000}
+];
+let operating=JSON.parse(localStorage.getItem('kebabOperating')||'null')||[
+ {name:'Thuê vị trí bán',amount:3000000},
+ {name:'Điện, nước, sạc',amount:400000},
+ {name:'Gas',amount:700000},
+ {name:'Lương nhân viên',amount:3500000},
+ {name:'Marketing',amount:300000}
+];
+let ingredients=JSON.parse(localStorage.getItem('kebabIngredients')||'null')||[
+ {name:'Thịt heo (tính theo thịt chín)',unit:'gram',price:130,qty:55},
+ {name:'Vỏ bánh mì tam giác',unit:'cây',price:8000,qty:0.25},
+ {name:'Rau ăn kèm',unit:'kg',price:20000,qty:0.035},
+ {name:'Xốt & gia vị',unit:'lít',price:60000,qty:0.015},
+ {name:'Bao bì, giấy lau, tăm',unit:'bộ',price:450,qty:1}
+];
+let sales=JSON.parse(localStorage.getItem('kebabDays')||'null')||[];
+function saveAll(){localStorage.setItem('kebabInvestments',JSON.stringify(investments));localStorage.setItem('kebabOperating',JSON.stringify(operating));localStorage.setItem('kebabIngredients',JSON.stringify(ingredients));localStorage.setItem('kebabDays',JSON.stringify(sales))}
+function renderInvestments(){document.getElementById('investmentRows').innerHTML=investments.map((x,i)=>`<div class="flex gap-2 items-center"><input class="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" value="${x.name}" oninput="investments[${i}].name=this.value;saveAll()"><input class="money w-32 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-right text-sm" data-index="${i}" value="${formatMoney(x.amount)}"><button onclick="investments.splice(${i},1);saveAll();renderInvestments()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800"><i class="fa-solid fa-xmark"></i></button></div>`).join('');attachMoneyEvents();calc()}
+function addInvestment(){investments.push({name:'',amount:0});saveAll();renderInvestments()}
+function renderOperating(){document.getElementById('operatingRows').innerHTML=operating.map((x,i)=>`<div class="flex gap-2 items-center"><input class="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" value="${x.name}" oninput="operating[${i}].name=this.value;saveAll()"><input class="money w-32 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-right text-sm" data-index="${i}" value="${formatMoney(x.amount)}"><button onclick="operating.splice(${i},1);saveAll();renderOperating()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800"><i class="fa-solid fa-xmark"></i></button></div>`).join('');attachMoneyEvents();calc()}
+function addOperating(){operating.push({name:'',amount:0});saveAll();renderOperating()}
+function renderIngredients(){document.getElementById('ingredientRows').innerHTML=ingredients.map((x,i)=>`<div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800"><div class="grid grid-cols-2 gap-2"><div class="col-span-2"><label class="text-xs font-bold">Tên</label><input class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm" value="${x.name}" oninput="ingredients[${i}].name=this.value;saveAll()"></div><div><label class="text-xs font-bold">Đơn vị</label><input class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm" value="${x.unit}" oninput="ingredients[${i}].unit=this.value;saveAll()"></div><div><label class="text-xs font-bold">Giá / đơn vị</label><input class="money decimal w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-right text-sm" data-index="${i}" data-key="price" value="${formatDecimal(x.price)}"></div><div><label class="text-xs font-bold">Lượng / ổ</label><input class="money decimal w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-right text-sm" data-index="${i}" data-key="qty" value="${formatDecimal(x.qty)}"></div><div><label class="text-xs font-bold">Chi phí / ổ</label><div id="ingCost${i}" class="font-bold text-emerald-600 dark:text-emerald-400 text-right py-2">${money(x.price*x.qty)}</div></div></div><button onclick="ingredients.splice(${i},1);saveAll();renderIngredients()" class="mt-2 text-xs text-red-600"><i class="fa-solid fa-trash"></i> Xóa</button></div>`).join('');attachMoneyEvents();calc()}
+function addIngredient(){ingredients.push({name:'',unit:'gram',price:0,qty:0});saveAll();renderIngredients()}
+function addSampleIngredients(){ingredients=[
+ {name:'Thịt heo (tính theo thịt chín)',unit:'gram',price:130,qty:55},
+ {name:'Vỏ bánh mì tam giác',unit:'cây',price:8000,qty:0.25},
+ {name:'Rau ăn kèm',unit:'kg',price:20000,qty:0.035},
+ {name:'Xốt & gia vị',unit:'lít',price:60000,qty:0.015},
+ {name:'Bao bì, giấy lau, tăm',unit:'bộ',price:450,qty:1}
+];saveAll();renderIngredients()}
+function addDay(){const date=document.getElementById('ngayBan').value||new Date().toISOString().slice(0,10);const units=readMoney(document.getElementById('soO').value);const discount=readMoney(document.getElementById('giamGia').value);const note=document.getElementById('ghiChu').value||'';const price=readMoney(document.getElementById('gia').value),food=currentFoodCost();const revenue=units*price-discount,cogs=units*food,profit=revenue-cogs;sales.unshift({date,units,discount,note,revenue,cogs,profit});saveAll();renderSales();document.getElementById('soO').value='0';document.getElementById('giamGia').value='0';document.getElementById('ghiChu').value=''}
+function clearDays(){if(confirm('Xóa toàn bộ lịch sử bán hàng?')){sales=[];saveAll();renderSales()}}
+function currentFoodCost(){const s=ingredients.reduce((a,x)=>a+(+x.price||0)*(+x.qty||0),0);return s*(1+readDecimal(document.getElementById('wastePct').value)/100)}
+function renderSales(){const t=document.getElementById('salesTable');if(!sales.length){t.innerHTML='<tr><td>Chưa có dữ liệu.</td></tr>';return}const tu=sales.reduce((s,x)=>s+x.units,0),tr=sales.reduce((s,x)=>s+x.revenue,0),tp=sales.reduce((s,x)=>s+x.profit,0);t.innerHTML=`<tr><th>Ngày</th><th class="right">Ổ</th><th class="right">Doanh thu</th><th class="right">Lợi nhuận gộp</th><th>Ghi chú</th></tr>`+sales.map(x=>`<tr><td>${x.date}</td><td class="right">${x.units}</td><td class="right">${money(x.revenue)}</td><td class="right">${money(x.profit)}</td><td>${x.note}</td></tr>`).join('')+`<tr><td class="font-bold">Tổng</td><td class="right font-bold">${tu}</td><td class="right font-bold">${money(tr)}</td><td class="right font-bold">${money(tp)}</td><td></td></tr>`}
+function calc(){const setup=investments.reduce((s,x)=>s+(+x.amount||0),0);const food=currentFoodCost();const price=readMoney(document.getElementById('gia').value);const gross=price-food,margin=price?gross/price*100:0;const targetDaily=readMoney(document.getElementById('targetDaily').value);const dailyProfit=targetDaily*gross;const fixed=operating.reduce((s,x)=>s+(+x.amount||0),0);const days=Math.max(1,readMoney(document.getElementById('ngay').value));const beMonth=fixed/Math.max(gross,1),beDay=beMonth/days;const goal=readMoney(document.getElementById('goal').value);const target=(fixed+goal)/Math.max(gross,1),targetDay=target/days;const dailyNet=targetDaily*gross-fixed/days;document.getElementById('kpiSetup')&&(document.getElementById('kpiSetup').textContent=money(setup));document.getElementById('totalSetup').textContent=money(setup);document.getElementById('totalFixed').textContent=money(fixed);document.getElementById('detailedFoodCost').textContent=money(food);document.getElementById('autoFoodCost').value=formatMoney(Math.round(food));document.getElementById('totalGross').textContent=money(gross);document.getElementById('dailyProfit').textContent=money(dailyProfit);document.getElementById('dailyNet').textContent=money(dailyNet);document.getElementById('kpis')&&(document.getElementById('kpis').innerHTML='');const rows=[['Chi phí đầu tư ban đầu',money(setup),'Tổng các khoản đầu tư một lần'],['Giá bán một ổ',money(price),'Giá bán cho khách'],['Giá vốn một ổ',money(food),'Tổng nguyên liệu + hao hụt'],['Lợi nhuận gộp một ổ',money(gross),'Giá bán - Giá vốn'],['Tỷ lệ lợi nhuận gộp',margin.toFixed(1)+'%','(Lợi nhuận gộp ÷ Giá bán) × 100%'],['Số ổ muốn bán trong ngày',targetDaily+' ổ','Mục tiêu bán hàng'],['Lợi nhuận gộp / ngày',money(dailyProfit),'Số ổ muốn bán × Lợi nhuận gộp'],['Lợi nhuận / ngày sau vận hành',money(dailyNet),'Lợi nhuận gộp/ngày - Chi phí vận hành/tháng ÷ Số ngày'],['Chi phí vận hành / tháng',money(fixed),'Tổng chi phí vận hành'],['Số ngày bán / tháng',days+' ngày','Số ngày mở bán'],['Điểm hòa vốn / tháng',Math.ceil(beMonth)+' ổ','Chi phí vận hành ÷ Lợi nhuận gộp'],['Điểm hòa vốn / ngày',Math.ceil(beDay)+' ổ','Hòa vốn / tháng ÷ Số ngày'],['Số ổ để đạt lãi '+money(goal)+'/tháng',Math.ceil(target)+' ổ','(Chi phí vận hành + Lợi nhuận mong muốn) ÷ Lợi nhuận gộp'],['Mục tiêu bán mỗi ngày',Math.ceil(targetDay)+' ổ','Số ổ để đạt lãi tháng ÷ Số ngày']];document.getElementById('resultTable').innerHTML='<tr><th>Chỉ tiêu</th><th class="right">Kết quả</th><th>Cách tính</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td class="right font-bold">${r[1]}</td><td class="text-slate-500 dark:text-slate-400">${r[2]}</td></tr>`).join('');let advice='';if(gross<=0)advice='<span class="badge bad">Giá bán chưa đủ bù giá vốn.</span>';else if(beDay>30)advice='<span class="badge bad">Mục tiêu quá cao. Cần giảm chi phí, đổi vị trí hoặc tăng giá.</span>';else if(beDay>20)advice='<span class="badge warn">Khả thi nhưng cần vị trí tốt và phục vụ nhanh.</span>';else advice='<span class="badge">Mô hình có biên an toàn tốt.</span>';document.getElementById('advice').innerHTML=advice;renderSales()}
+function exportPNG(){const node=document.querySelector('main');html2canvas(node,{backgroundColor:getComputedStyle(document.body).backgroundColor,scale:2}).then(canvas=>{const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='kebab-plan.png';a.click()})}
+function backup(){const blob=new Blob([JSON.stringify({investments,operating,ingredients,sales},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kebab-backup.json';a.click()}
+document.getElementById('import').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file)return;const data=JSON.parse(await file.text());if(!data.investments||!data.operating||!data.ingredients)throw new Error('Dữ liệu không hợp lệ');if(confirm('Khôi phục sẽ thay toàn bộ dữ liệu hiện tại. Tiếp tục?')){investments=data.investments;operating=data.operating;ingredients=data.ingredients;sales=data.sales||[];saveAll();renderAll()}}catch(err){alert('Không khôi phục được: '+err.message)}e.target.value=''});
+function resetSample(){if(confirm('Nạp lại dữ liệu mẫu?')){investments=[
+ {name:'Xe đẩy inox + lò nướng kebab',amount:12000000},
+ {name:'Máy ép bánh mì',amount:2500000},
+ {name:'Dao cắt thịt điện',amount:1200000},
+ {name:'Bình gas & dụng cụ',amount:2000000},
+ {name:'Tủ lạnh mini',amount:3500000},
+ {name:'Decal, bảng hiệu, LED',amount:2000000},
+ {name:'Dụng cụ & dự phòng',amount:5000000}
+];operating=[
+ {name:'Thuê vị trí bán',amount:3000000},
+ {name:'Điện, nước, sạc',amount:400000},
+ {name:'Gas',amount:700000},
+ {name:'Lương nhân viên',amount:3500000},
+ {name:'Marketing',amount:300000}
+];ingredients=[
+ {name:'Thịt heo (tính theo thịt chín)',unit:'gram',price:130,qty:55},
+ {name:'Vỏ bánh mì tam giác',unit:'cây',price:8000,qty:0.25},
+ {name:'Rau ăn kèm',unit:'kg',price:20000,qty:0.035},
+ {name:'Xốt & gia vị',unit:'lít',price:60000,qty:0.015},
+ {name:'Bao bì, giấy lau, tăm',unit:'bộ',price:450,qty:1}
+];sales=[];saveAll();renderAll()}}
+function renderAll(){renderInvestments();renderOperating();renderIngredients();renderSales();calc()}
+const pages=[['invest','fa-wallet','Chi phí đầu tư'],['operating','fa-repeat','Chi phí vận hành'],['foodcost','fa-list','Tính giá vốn'],['price','fa-tags','Giá bán & lợi nhuận'],['results','fa-bullseye','Mục tiêu / Kết quả'],['sales','fa-receipt','Doanh số'],['guide','fa-book-open','Hướng dẫn'],['backup','fa-database','Sao lưu & khôi phục']];
+document.getElementById('menu').innerHTML=pages.map(([id,icon,title])=>`<button class="nav-link flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-teal-50 dark:hover:bg-slate-800 transition-all duration-300 w-full text-left" data-page="${id}" onclick="showPage('${id}')"><i class="fa-solid ${icon} w-5 text-teal-600"></i> ${title}</button>`).join('');
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('bg-teal-50',b.dataset.page===id));document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('dark:bg-slate-800',b.dataset.page===id));if(window.innerWidth<1024)toggleSidebar();window.scrollTo({top:0,behavior:'smooth'})}
+function attachMoneyEvents(){document.querySelectorAll('input.money').forEach(el=>{if(el.id==='autoFoodCost')return;el.removeEventListener('input',onMoneyInput);el.removeEventListener('blur',onMoneyBlur);el.addEventListener('input',onMoneyInput);el.addEventListener('blur',onMoneyBlur)})}
+function onMoneyInput(e){const el=e.target;if(el.dataset.index!==undefined&&el.dataset.key!==undefined){const i=+el.dataset.index,k=el.dataset.key;ingredients[i][k]=readDecimal(el.value);saveAll();const c=document.getElementById('ingCost'+i);if(c)c.textContent=money(ingredients[i].price*ingredients[i].qty);calc()}else if(el.dataset.index!==undefined){const i=+el.dataset.index;if(el.closest('#investmentRows')){investments[i].amount=readMoney(el.value)}else{operating[i].amount=readMoney(el.value)}saveAll();calc()}else calc()}
+function onMoneyBlur(e){const el=e.target;if(el.classList.contains('decimal')){const n=readDecimal(el.value);el.value=n?String(n):''}else{const raw=el.value.replace(/\D/g,'');el.value=raw?formatMoney(+raw):''}calc()}
 document.getElementById('ngayBan').value=new Date().toISOString().slice(0,10);
-
-function attachMoneyEvents(){
- document.querySelectorAll('input.money').forEach(el=>{
-  if(el.id==='autoFoodCost')return;
-  el.removeEventListener('input',onMoneyInput);
-  el.removeEventListener('blur',onMoneyBlur);
-  el.addEventListener('input',onMoneyInput);
-  el.addEventListener('blur',onMoneyBlur);
- });
-}
-function onMoneyInput(e){
- const el=e.target;
- if(el.dataset.index!==undefined&&el.dataset.key!==undefined){updateIngredientFromInput(el)}
- else if(el.dataset.index!==undefined){updateInvestmentFromInput(el)||updateOperatingFromInput(el)}
- else{calc()}
-}
-function onMoneyBlur(e){
- const el=e.target;
- if(el.classList.contains('decimal')){
-  const n=readDecimal(el.value);
-  el.value=n?formatDecimal(n):'';
- }else{
-  const raw=el.value.replace(/\D/g,'');
-  el.value=raw?formatMoney(Number(raw)):'';
- }
- calc();
-}
-renderInvestments();
-renderOperating();
-renderIngredients();
-</script>
-</main>
-</body>
-</html>
+renderAll();showPage('invest');
+</script></body></html>
